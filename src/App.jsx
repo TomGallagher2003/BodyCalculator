@@ -1,34 +1,60 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Sidebar, MobileNav, MobileHeader } from './components'
+import { TDEECalculator, MacroCalculator, BodyFatCalculator } from './calculators'
+
+const pageTitles = {
+  tdee: 'TDEE Calculator',
+  macros: 'Macro Splitter',
+  bodyfat: 'Body Fat Calculator',
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [currentPage, setCurrentPage] = useState('tdee')
+  const [sharedTDEE, setSharedTDEE] = useState(null)
+  const [sharedWeight, setSharedWeight] = useState(null)
+  const [sharedWeightUnit, setSharedWeightUnit] = useState(null)
+
+  const handleUseTDEE = (tdee, weight, weightUnit) => {
+    setSharedTDEE(tdee)
+    setSharedWeight(weight)
+    setSharedWeightUnit(weightUnit)
+    setCurrentPage('macros')
+  }
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'tdee':
+        return <TDEECalculator onUseTDEE={handleUseTDEE} />
+      case 'macros':
+        return (
+          <MacroCalculator
+            key={`${sharedTDEE}-${sharedWeight}-${sharedWeightUnit}`}
+            initialTDEE={sharedTDEE}
+            initialWeight={sharedWeight}
+            initialWeightUnit={sharedWeightUnit}
+          />
+        )
+      case 'bodyfat':
+        return <BodyFatCalculator />
+      default:
+        return <TDEECalculator onUseTDEE={handleUseTDEE} />
+    }
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="flex min-h-screen bg-[var(--bg-primary)]">
+      <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />
+
+      <main className="flex-1 pb-20 md:pb-0">
+        <MobileHeader title={pageTitles[currentPage]} />
+
+        <div className="max-w-2xl mx-auto p-4 md:p-8">
+          {renderPage()}
+        </div>
+      </main>
+
+      <MobileNav currentPage={currentPage} onNavigate={setCurrentPage} />
+    </div>
   )
 }
 
