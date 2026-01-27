@@ -9,32 +9,32 @@
 - [x] Create project constitution (CLAUDE.md)
 - [x] Create progress tracker (PROGRESS.md)
 - [x] Create implementation plan (PLAN.md)
-- [ ] Get plan approval from user
+- [x] Get plan approval from user
 
 ### Phase 2: Core Logic
-- [ ] Implement TDEE/BMR calculator math (Mifflin-St Jeor)
-- [ ] Write unit tests for TDEE/BMR
-- [ ] Implement Macro Splitter logic
-- [ ] Write unit tests for Macro Splitter
-- [ ] Implement Navy Body Fat calculator math
-- [ ] Write unit tests for Navy Body Fat
+- [x] Implement TDEE/BMR calculator math (Mifflin-St Jeor)
+- [x] Write unit tests for TDEE/BMR
+- [x] Implement Macro Splitter logic
+- [x] Write unit tests for Macro Splitter
+- [x] Implement Navy Body Fat calculator math
+- [x] Write unit tests for Navy Body Fat
 
 ### Phase 3: UI Components
-- [ ] Create base layout (dark mode, responsive nav/sidebar)
-- [ ] Build reusable input components
-- [ ] Build reusable card/result display components
-- [ ] Create TDEE Calculator UI
-- [ ] Create Macro Splitter UI
-- [ ] Create Navy Body Fat Calculator UI
+- [x] Create base layout (dark mode, responsive nav/sidebar)
+- [x] Build reusable input components
+- [x] Build reusable card/result display components
+- [x] Create TDEE Calculator UI
+- [x] Create Macro Splitter UI
+- [x] Create Navy Body Fat Calculator UI
 
 ### Phase 4: CI/CD
-- [ ] Create GitHub Actions workflow for deployment
-- [ ] Configure gh-pages branch deployment
+- [x] Create GitHub Actions workflow for deployment
+- [x] Configure gh-pages branch deployment
 - [ ] Verify deployment works
 
 ### Phase 5: Polish
-- [ ] Add transitions and animations
-- [ ] Improve mobile responsiveness
+- [x] Add transitions and animations
+- [x] Improve mobile responsiveness
 - [ ] Add input validation feedback
 - [ ] Final testing and QA
 
@@ -44,4 +44,7 @@
 
 | Date | Feature | Commit |
 |------|---------|--------|
-| - | Project initialization | - |
+| 2026-01-27 | Project initialization | fae511f |
+| 2026-01-27 | Calculator math logic with 65 tests | 9c2879d |
+| 2026-01-27 | Complete UI with all 3 calculators | dfa1e03 |
+| 2026-01-27 | GitHub Actions deployment workflow | - |
