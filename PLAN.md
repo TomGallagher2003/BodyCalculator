@@ -333,3 +333,187 @@ This formula is more accurate for individuals who know their body fat %, especia
 |------|----------------|
 | 9.1 | `feat: add optional body fat % for enhanced TDEE calculation` |
 | 9.2 | `docs: add feature backlog with 5 new feature ideas` |
+
+---
+
+## Phase 12: Progressive Web App (PWA) Conversion
+
+### Objective
+Convert the BodyCalculator application into an installable Progressive Web App with:
+- Home screen installation on iOS/Android
+- Offline functionality (cached app shell)
+- Auto-updating service worker
+
+---
+
+### Step 12.1: Install Dependencies
+
+```bash
+npm install -D vite-plugin-pwa
+```
+
+**Why:** vite-plugin-pwa handles service worker generation, manifest creation, and auto-updates seamlessly with Vite.
+
+---
+
+### Step 12.2: Update vite.config.js
+
+Add the PWA plugin configuration:
+
+```js
+import { VitePWA } from 'vite-plugin-pwa'
+
+VitePWA({
+  registerType: 'autoUpdate',
+  includeAssets: ['vite.svg'],
+  manifest: {
+    name: 'Body Calculator Suite',
+    short_name: 'BodyCalc',
+    description: 'TDEE, Macro, and Body Fat calculators with progress tracking',
+    theme_color: '#0a0a0a',
+    background_color: '#0a0a0a',
+    display: 'standalone',
+    scope: '/BodyCalculator/',
+    start_url: '/BodyCalculator/',
+    icons: [
+      { src: 'pwa-192x192.svg', sizes: '192x192', type: 'image/svg+xml', purpose: 'any' },
+      { src: 'pwa-512x512.svg', sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
+    ]
+  },
+  workbox: {
+    globPatterns: ['**/*.{js,css,html,svg,png,ico,woff,woff2}'],
+    runtimeCaching: [
+      {
+        urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'google-fonts-cache',
+          expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 }
+        }
+      }
+    ]
+  }
+})
+```
+
+**Key Configuration:**
+- `registerType: 'autoUpdate'` - Auto-updates without user prompt
+- `display: 'standalone'` - Full-screen app experience (no browser chrome)
+- `scope` and `start_url` - Match GitHub Pages base path
+- `workbox.globPatterns` - Cache all static assets for offline use
+
+---
+
+### Step 12.3: Generate PWA Icons
+
+Create two SVG icons in `/public`:
+
+**public/pwa-192x192.svg**
+- 192x192 canvas
+- Dark background (#0a0a0a) matching theme
+- Bold cyan "B" letter (#22d3ee) centered
+- Simple design readable at small sizes
+
+**public/pwa-512x512.svg**
+- 512x512 canvas
+- Same design as 192x192
+- Used for splash screens and larger displays
+- `maskable` purpose for adaptive icon support
+
+**Why SVG:**
+- Scales perfectly to any resolution
+- Small file size
+- No external image generation tools needed
+
+---
+
+### Step 12.4: Update index.html
+
+Add mobile-specific meta tags and iOS PWA support:
+
+```html
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="description" content="TDEE, Macro, and Body Fat calculators with progress tracking" />
+
+  <!-- iOS Specific -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="BodyCalc" />
+  <link rel="apple-touch-icon" href="/BodyCalculator/pwa-192x192.svg" />
+
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <title>Body Calculator Suite</title>
+</head>
+```
+
+**iOS Tags Explained:**
+- `apple-mobile-web-app-capable` - Enables standalone mode on iOS
+- `apple-mobile-web-app-status-bar-style` - Dark status bar matching theme
+- `apple-touch-icon` - Icon for iOS home screen
+
+---
+
+### Step 12.5: Build Verification
+
+After implementation, verify:
+
+```bash
+npm run build
+```
+
+**Success Criteria:**
+- [ ] Build completes without errors
+- [ ] `dist/manifest.webmanifest` exists
+- [ ] `dist/sw.js` (service worker) exists
+- [ ] Icons copied to `dist/` folder
+
+---
+
+### Step 12.6: Deployment
+
+```bash
+git add .
+git commit -m "feat: convert to PWA with offline support and installability"
+git push -u origin claude/convert-to-pwa-JPwlg
+```
+
+---
+
+## Implementation Checklist (Phase 12)
+
+| # | Task | Status |
+|---|------|--------|
+| 1 | Install vite-plugin-pwa | [ ] |
+| 2 | Update vite.config.js with PWA plugin | [ ] |
+| 3 | Create public/pwa-192x192.svg | [ ] |
+| 4 | Create public/pwa-512x512.svg | [ ] |
+| 5 | Update index.html with PWA meta tags | [ ] |
+| 6 | Run npm run lint | [ ] |
+| 7 | Run npm run build | [ ] |
+| 8 | Verify dist/manifest.webmanifest exists | [ ] |
+| 9 | Run npm run test | [ ] |
+| 10 | Commit and push | [ ] |
+
+---
+
+## Expected Outcome
+
+After deployment:
+1. iOS Safari users can tap "Add to Home Screen" from share menu
+2. Android Chrome users see "Install App" prompt
+3. App opens in standalone mode (no browser UI)
+4. App works offline with cached HTML/CSS/JS
+5. Auto-updates when new version is deployed
+
+---
+
+## Commit Strategy (Phase 12)
+
+| Step | Commit Message |
+|------|----------------|
+| 12 | `feat: convert to PWA with offline support and installability` |

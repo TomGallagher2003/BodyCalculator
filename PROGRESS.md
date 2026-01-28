@@ -86,6 +86,15 @@
 - [x] TDEE Calculator loads latest weight, body fat, height, and age from progress data
 - [x] Write unit tests for user settings functions (7 new tests, 138 total)
 
+### Phase 12: Progressive Web App (PWA) Conversion
+- [x] Install vite-plugin-pwa dependency
+- [x] Configure PWA plugin in vite.config.js with manifest and workbox settings
+- [x] Generate SVG icons (pwa-192x192.svg, pwa-512x512.svg) with theme colors
+- [x] Update index.html with PWA meta tags and iOS-specific tags
+- [x] Verify build produces manifest.webmanifest and sw.js
+- [x] App now installable on iOS/Android home screens
+- [x] Offline support via service worker caching
+
 ---
 
 ## Completed Features Log
@@ -103,3 +112,4 @@
 | 2026-01-28 | Feature backlog (5 new feature ideas) | - |
 | 2026-01-28 | Progress Tracking with localStorage, charts, export/import | - |
 | 2026-01-28 | Progress Tracker enhancement: manual inputs, metric defaults, user settings (138 tests) | - |
+| 2026-01-28 | PWA conversion: installable app with offline support | - |
