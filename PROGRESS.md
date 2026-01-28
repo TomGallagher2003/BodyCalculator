@@ -38,6 +38,15 @@
 - [ ] Add input validation feedback
 - [ ] Final testing and QA
 
+### Phase 7: Pro Feature Expansion
+- [x] Refactor Macro Splitter with custom calorie adjustment slider
+- [x] Add quick-select buttons for common adjustments (-500, -250, 0, +250, +500)
+- [x] Add custom number input for precise calorie adjustment
+- [x] Create Fat Loss Required calculator logic
+- [x] Write unit tests for Fat Loss Required (13 tests)
+- [x] Create Fat Loss Required calculator UI
+- [x] Add new calculator to navigation (Sidebar + MobileNav)
+
 ---
 
 ## Completed Features Log
@@ -48,3 +57,5 @@
 | 2026-01-27 | Calculator math logic with 65 tests | 9c2879d |
 | 2026-01-27 | Complete UI with all 3 calculators | dfa1e03 |
 | 2026-01-27 | GitHub Actions deployment workflow | - |
+| 2026-01-27 | Macro Splitter custom calorie adjustment | - |
+| 2026-01-27 | Fat Loss Required calculator (78 total tests) | - |
