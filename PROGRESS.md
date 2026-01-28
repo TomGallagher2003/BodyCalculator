@@ -56,6 +56,15 @@
 - [x] Add reset to defaults button
 - [x] Write unit tests for new helper functions (17 new tests, 93 total)
 
+### Phase 9: Pro Features - Body Fat Enhanced TDEE
+- [x] Add Katch-McArdle formula for body fat-based BMR calculation
+- [x] Add calculateLeanMass utility function
+- [x] Add optional body fat % input with collapsible "Advanced Options" section
+- [x] Display formula indicator (Mifflin-St Jeor vs Katch-McArdle)
+- [x] Show lean mass in results when body fat % is provided
+- [x] Write unit tests for new body fat % logic (10 new tests, 103 total)
+- [x] Create BACKLOG.md with 5 prioritized feature ideas
+
 ---
 
 ## Completed Features Log
@@ -69,3 +78,5 @@
 | 2026-01-27 | Macro Splitter custom calorie adjustment | - |
 | 2026-01-27 | Fat Loss Required calculator (78 total tests) | - |
 | 2026-01-28 | Custom macro rules (protein g/lb, fat %) with 93 total tests | - |
+| 2026-01-28 | Body fat % enhanced TDEE (Katch-McArdle) with 103 total tests | - |
+| 2026-01-28 | Feature backlog (5 new feature ideas) | - |
