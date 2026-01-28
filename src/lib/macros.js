@@ -122,3 +122,73 @@ export function calculateMacros({
 export function kgToLbs(kg) {
   return kg / 0.453592
 }
+
+/**
+ * Calculate protein percentage of total calories from g/lb and bodyweight
+ * @param {number} proteinGramsPerLb - Protein in grams per pound
+ * @param {number} bodyweightLbs - Bodyweight in pounds
+ * @param {number} targetCalories - Target daily calories
+ * @returns {number} Protein percentage of total calories
+ */
+export function proteinGramsToPercentage(proteinGramsPerLb, bodyweightLbs, targetCalories) {
+  if (targetCalories <= 0) return 0
+  const proteinGrams = bodyweightLbs * proteinGramsPerLb
+  const proteinCalories = proteinGrams * CALORIES_PER_GRAM.protein
+  return Math.round((proteinCalories / targetCalories) * 100)
+}
+
+/**
+ * Calculate protein g/lb from percentage of total calories
+ * @param {number} proteinPercentage - Protein as percentage of total calories
+ * @param {number} bodyweightLbs - Bodyweight in pounds
+ * @param {number} targetCalories - Target daily calories
+ * @returns {number} Protein in grams per pound
+ */
+export function proteinPercentageToGrams(proteinPercentage, bodyweightLbs, targetCalories) {
+  if (bodyweightLbs <= 0) return 0
+  const proteinCalories = targetCalories * (proteinPercentage / 100)
+  const proteinGrams = proteinCalories / CALORIES_PER_GRAM.protein
+  return Math.round((proteinGrams / bodyweightLbs) * 100) / 100 // Round to 2 decimal places
+}
+
+/**
+ * Calculate macro split using custom percentages
+ * @param {Object} params - Input parameters
+ * @param {number} params.targetCalories - Target daily calories
+ * @param {number} params.proteinPercentage - Protein as percentage of calories
+ * @param {number} params.fatPercentage - Fat as percentage of calories
+ * @returns {Object} Macro breakdown
+ */
+export function calculateMacrosFromPercentages({ targetCalories, proteinPercentage, fatPercentage }) {
+  const carbPercentage = 100 - proteinPercentage - fatPercentage
+
+  const proteinCalories = targetCalories * (proteinPercentage / 100)
+  const fatCalories = targetCalories * (fatPercentage / 100)
+  const carbCalories = targetCalories * (carbPercentage / 100)
+
+  const protein = Math.round(proteinCalories / CALORIES_PER_GRAM.protein)
+  const fat = Math.round(fatCalories / CALORIES_PER_GRAM.fat)
+  const carbs = Math.max(0, Math.round(carbCalories / CALORIES_PER_GRAM.carbs))
+
+  // Recalculate actual calories from rounded grams
+  const actualCalories =
+    protein * CALORIES_PER_GRAM.protein +
+    fat * CALORIES_PER_GRAM.fat +
+    carbs * CALORIES_PER_GRAM.carbs
+
+  return {
+    targetCalories,
+    actualCalories,
+    protein,
+    fat,
+    carbs,
+    breakdown: {
+      proteinCalories: protein * CALORIES_PER_GRAM.protein,
+      fatCalories: fat * CALORIES_PER_GRAM.fat,
+      carbCalories: carbs * CALORIES_PER_GRAM.carbs,
+      proteinPercentage: Math.round((protein * CALORIES_PER_GRAM.protein / actualCalories) * 100),
+      fatPercentage: Math.round((fat * CALORIES_PER_GRAM.fat / actualCalories) * 100),
+      carbPercentage: Math.round((carbs * CALORIES_PER_GRAM.carbs / actualCalories) * 100),
+    },
+  }
+}
