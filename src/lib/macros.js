@@ -19,13 +19,14 @@ export const CALORIES_PER_GRAM = {
 }
 
 /**
- * Calculate target calories based on TDEE and goal
+ * Calculate target calories based on TDEE and goal or custom adjustment
  * @param {number} tdee - Total Daily Energy Expenditure
  * @param {string} goal - Goal key from GOALS
+ * @param {number} [customAdjustment] - Optional custom calorie adjustment (overrides goal)
  * @returns {number} Target daily calories
  */
-export function calculateTargetCalories(tdee, goal) {
-  const adjustment = GOALS[goal]?.adjustment || 0
+export function calculateTargetCalories(tdee, goal, customAdjustment) {
+  const adjustment = customAdjustment !== undefined ? customAdjustment : (GOALS[goal]?.adjustment || 0)
   return tdee + adjustment
 }
 
@@ -72,6 +73,7 @@ export function calculateCarbs(targetCalories, proteinGrams, fatGrams) {
  * @param {number} params.tdee - Total Daily Energy Expenditure
  * @param {number} params.bodyweightLbs - Bodyweight in pounds
  * @param {string} params.goal - Goal key from GOALS
+ * @param {number} [params.customAdjustment] - Custom calorie adjustment (overrides goal)
  * @param {number} [params.proteinMultiplier=1] - Protein g per lb bodyweight
  * @param {number} [params.fatPercentage=0.25] - Fat percentage of calories
  * @returns {Object} Macro breakdown
@@ -80,10 +82,11 @@ export function calculateMacros({
   tdee,
   bodyweightLbs,
   goal,
+  customAdjustment,
   proteinMultiplier = 1,
   fatPercentage = 0.25,
 }) {
-  const targetCalories = calculateTargetCalories(tdee, goal)
+  const targetCalories = calculateTargetCalories(tdee, goal, customAdjustment)
   const protein = calculateProtein(bodyweightLbs, proteinMultiplier)
   const fat = calculateFat(targetCalories, fatPercentage)
   const carbs = calculateCarbs(targetCalories, protein, fat)

@@ -172,12 +172,67 @@ BodyCalculator/
 
 ---
 
-## Awaiting Approval
+---
 
-**Please review this plan and confirm before I proceed with implementation.**
+## Phase 7: Pro Feature Expansion
 
-Key decisions for your approval:
-1. Is the Mifflin-St Jeor formula acceptable for BMR?
-2. Are the macro splits (1g protein/lb, 25% fat) appropriate?
-3. Is the file structure acceptable?
-4. Any additional features or calculators to include?
+### Step 7.1: Macro Splitter - Custom Calorie Adjustment
+
+**Current State:** Fixed preset buttons (Cut -500, Bulk +250, etc.)
+
+**New Requirement:** Add a dynamic slider/number input for custom calorie surplus/deficit
+
+- Add a slider component with range -1000 to +1000 calories
+- Add a number input for precise custom values
+- Update macro math in real-time as value changes
+- Keep preset buttons as quick-select options
+- When custom value is used, highlight it in the UI
+
+**Files to modify:**
+- `src/lib/macros.js` - Add custom adjustment support
+- `src/calculators/MacroCalculator.jsx` - Add slider/input UI
+
+---
+
+### Step 7.2: Fat Loss Required Calculator
+
+**Objective:** Calculate how much weight a user needs to lose to reach a target body fat percentage
+
+**Math Logic:**
+```
+Goal Weight = Current Lean Mass / (1 - Target BF%)
+Weight to Lose = Current Weight - Goal Weight
+```
+
+Where:
+- Current Lean Mass = Current Weight × (1 - Current BF%)
+- All values in same unit (lbs or kg)
+
+**Inputs:**
+- Current Weight (with unit toggle)
+- Current Body Fat % (slider or input)
+- Target Body Fat % (slider or input)
+
+**Outputs:**
+- Current Lean Mass
+- Goal Weight
+- Total Weight to Lose
+
+**Files to create:**
+- `src/lib/fatloss.js` - Math logic
+- `src/lib/fatloss.test.js` - Unit tests
+- `src/calculators/FatLossCalculator.jsx` - UI component
+
+**UI Requirements:**
+- Match existing card wrappers, input styles, typography
+- Add to navigation (Sidebar + MobileNav)
+- Use Target icon from Lucide
+
+---
+
+## Commit Strategy (Phase 7)
+
+| Step | Commit Message |
+|------|----------------|
+| 7.1 | `feat: add custom calorie adjustment to macro splitter` |
+| 7.2 | `feat: add fat loss required calculator` |

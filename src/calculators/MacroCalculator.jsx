@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardContent,
   Input,
-  Select,
+  Slider,
   ToggleButton,
   ResultDisplay,
   ResultCard,
@@ -15,21 +15,29 @@ import {
 } from '../components'
 import { calculateMacros, GOALS, kgToLbs } from '../lib/macros'
 
+const QUICK_ADJUSTMENTS = [
+  { value: -500, label: '-500' },
+  { value: -250, label: '-250' },
+  { value: 0, label: '0' },
+  { value: 250, label: '+250' },
+  { value: 500, label: '+500' },
+]
+
 export function MacroCalculator({ initialTDEE, initialWeight, initialWeightUnit }) {
-  // Use a key-based approach: parent will remount with new key when props change
   const [tdee, setTdee] = useState(initialTDEE?.toString() || '')
   const [bodyweight, setBodyweight] = useState(initialWeight?.toString() || '')
   const [weightUnit, setWeightUnit] = useState(initialWeightUnit || 'lbs')
-  const [goal, setGoal] = useState('maintain')
+  const [customAdjustment, setCustomAdjustment] = useState(0)
 
-  // Derived values from props for display (allows manual override)
   const displayTdee = tdee || (initialTDEE?.toString() ?? '')
   const displayWeight = bodyweight || (initialWeight?.toString() ?? '')
 
-  const goalOptions = Object.entries(GOALS).map(([key, val]) => ({
-    value: key,
-    label: `${val.label} (${val.adjustment >= 0 ? '+' : ''}${val.adjustment} cal)`,
-  }))
+  const formatAdjustment = (val) => {
+    const num = parseInt(val, 10)
+    if (num > 0) return `+${num} cal`
+    if (num < 0) return `${num} cal`
+    return 'Maintenance'
+  }
 
   const results = useMemo(() => {
     const tdeeNum = parseFloat(displayTdee)
@@ -44,9 +52,10 @@ export function MacroCalculator({ initialTDEE, initialWeight, initialWeightUnit 
     return calculateMacros({
       tdee: tdeeNum,
       bodyweightLbs,
-      goal,
+      goal: 'maintain',
+      customAdjustment: parseInt(customAdjustment, 10),
     })
-  }, [displayTdee, displayWeight, weightUnit, goal])
+  }, [displayTdee, displayWeight, weightUnit, customAdjustment])
 
   return (
     <div className="space-y-6">
@@ -88,13 +97,53 @@ export function MacroCalculator({ initialTDEE, initialWeight, initialWeightUnit 
             />
           </div>
 
-          <Select
-            label="Goal"
-            id="goal"
-            value={goal}
-            onChange={(e) => setGoal(e.target.value)}
-            options={goalOptions}
-          />
+          <div className="space-y-3">
+            <Slider
+              label="Calorie Adjustment"
+              id="calorie-adjustment"
+              value={customAdjustment}
+              onChange={(e) => setCustomAdjustment(e.target.value)}
+              min={-1000}
+              max={1000}
+              step={25}
+              valueFormatter={formatAdjustment}
+            />
+
+            <div className="flex flex-wrap gap-2">
+              {QUICK_ADJUSTMENTS.map((adj) => (
+                <button
+                  key={adj.value}
+                  onClick={() => setCustomAdjustment(adj.value)}
+                  className={`
+                    px-3 py-1.5 text-sm rounded-lg transition-colors
+                    ${parseInt(customAdjustment, 10) === adj.value
+                      ? 'bg-[var(--accent)] text-[var(--bg-primary)] font-medium'
+                      : 'bg-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                    }
+                  `}
+                >
+                  {adj.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-[var(--text-secondary)]">Custom:</span>
+              <input
+                type="number"
+                value={customAdjustment}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10)
+                  if (!isNaN(val) && val >= -1000 && val <= 1000) {
+                    setCustomAdjustment(val)
+                  }
+                }}
+                className="w-24 px-2 py-1 text-sm bg-[var(--bg-tertiary)] border border-[var(--bg-tertiary)] rounded-lg
+                           text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
+              />
+              <span className="text-sm text-[var(--text-secondary)]">cal</span>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
