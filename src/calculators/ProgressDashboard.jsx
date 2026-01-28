@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef } from 'react'
-import { Download, Upload, Trash2, TrendingUp, TrendingDown, Minus, Calendar, Scale, Percent, Flame } from 'lucide-react'
+import { Download, Upload, Trash2, TrendingUp, TrendingDown, Minus, Calendar, Scale, Percent, Plus, Save, Settings } from 'lucide-react'
 import {
   Card,
   CardHeader,
@@ -7,6 +7,8 @@ import {
   CardDescription,
   CardContent,
   Button,
+  Input,
+  ToggleButton,
   ResultCard,
 } from '../components'
 import {
@@ -19,6 +21,10 @@ import {
   deleteProgressEntry,
   clearAllProgress,
   formatDate,
+  saveProgressEntry,
+  getTodayISO,
+  getUserSettings,
+  saveUserSettings,
   ENTRY_TYPES,
 } from '../lib/progress'
 
@@ -27,7 +33,7 @@ const METRIC_CONFIG = {
     label: 'Weight',
     icon: Scale,
     metric: 'weight',
-    unit: 'lbs',
+    unit: 'kg',
     color: 'var(--accent)',
   },
   [ENTRY_TYPES.BODY_FAT]: {
@@ -36,13 +42,6 @@ const METRIC_CONFIG = {
     metric: 'bodyFat',
     unit: '%',
     color: 'var(--warning)',
-  },
-  [ENTRY_TYPES.TDEE]: {
-    label: 'TDEE',
-    icon: Flame,
-    metric: 'tdee',
-    unit: 'cal',
-    color: 'var(--success)',
   },
 }
 
@@ -196,11 +195,9 @@ function EntryList({ entries, onDelete }) {
   const getEntryLabel = (entry) => {
     switch (entry.type) {
       case ENTRY_TYPES.WEIGHT:
-        return `${entry.data.weight} ${entry.data.unit || 'lbs'}`
+        return `${entry.data.weight} ${entry.data.unit || 'kg'}`
       case ENTRY_TYPES.BODY_FAT:
         return `${entry.data.bodyFat}%`
-      case ENTRY_TYPES.TDEE:
-        return `${entry.data.tdee} cal`
       case ENTRY_TYPES.MACROS:
         return `P: ${entry.data.protein}g / C: ${entry.data.carbs}g / F: ${entry.data.fat}g`
       default:
@@ -247,6 +244,27 @@ export function ProgressDashboard() {
   const [refreshKey, setRefreshKey] = useState(0)
   const fileInputRef = useRef(null)
 
+  // Manual entry form state
+  const [showManualEntry, setShowManualEntry] = useState(false)
+  const [manualWeight, setManualWeight] = useState('')
+  const [manualWeightUnit, setManualWeightUnit] = useState('kg')
+  const [manualBodyFat, setManualBodyFat] = useState('')
+  const [manualDate, setManualDate] = useState(getTodayISO())
+
+  // User settings state
+  const [showSettings, setShowSettings] = useState(false)
+  const [settingsHeight, setSettingsHeight] = useState('')
+  const [settingsHeightUnit, setSettingsHeightUnit] = useState('cm')
+  const [settingsAge, setSettingsAge] = useState('')
+
+  // Load settings on mount
+  useMemo(() => {
+    const settings = getUserSettings()
+    if (settings.height) setSettingsHeight(settings.height.toString())
+    if (settings.heightUnit) setSettingsHeightUnit(settings.heightUnit)
+    if (settings.age) setSettingsAge(settings.age.toString())
+  }, [])
+
   // refreshKey is used to trigger re-fetch from localStorage after mutations
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const entries = useMemo(() => getProgressEntries(), [refreshKey])
@@ -263,6 +281,42 @@ export function ProgressDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [activeType, config, refreshKey]
   )
+
+  const handleManualSave = () => {
+    let saved = false
+    if (manualWeight) {
+      saveProgressEntry({
+        type: ENTRY_TYPES.WEIGHT,
+        date: manualDate,
+        data: { weight: parseFloat(manualWeight), unit: manualWeightUnit },
+      })
+      saved = true
+    }
+    if (manualBodyFat) {
+      saveProgressEntry({
+        type: ENTRY_TYPES.BODY_FAT,
+        date: manualDate,
+        data: { bodyFat: parseFloat(manualBodyFat) },
+      })
+      saved = true
+    }
+    if (saved) {
+      setManualWeight('')
+      setManualBodyFat('')
+      setManualDate(getTodayISO())
+      setShowManualEntry(false)
+      setRefreshKey((k) => k + 1)
+    }
+  }
+
+  const handleSaveSettings = () => {
+    saveUserSettings({
+      height: settingsHeight ? parseFloat(settingsHeight) : '',
+      heightUnit: settingsHeightUnit,
+      age: settingsAge ? parseInt(settingsAge, 10) : '',
+    })
+    setShowSettings(false)
+  }
 
   const handleExport = () => {
     const data = exportProgressData()
@@ -309,12 +363,152 @@ export function ProgressDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Manual Entry Card */}
       <Card>
         <CardHeader>
-          <CardTitle>Progress Dashboard</CardTitle>
-          <CardDescription>Track your body stats over time with visual charts</CardDescription>
+          <div className="flex items-start justify-between">
+            <div>
+              <CardTitle>Progress Dashboard</CardTitle>
+              <CardDescription>Track your body stats over time with visual charts</CardDescription>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setShowSettings(!showSettings)}
+                variant="secondary"
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                <Settings className="w-4 h-4" />
+                Settings
+              </Button>
+              <Button
+                onClick={() => setShowManualEntry(!showManualEntry)}
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Add Entry
+              </Button>
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* User Settings Form */}
+          {showSettings && (
+            <div className="p-4 bg-[var(--bg-secondary)] rounded-lg space-y-4">
+              <h3 className="text-sm font-medium text-[var(--text-primary)] flex items-center gap-2">
+                <Settings className="w-4 h-4" />
+                User Settings
+              </h3>
+              <p className="text-xs text-[var(--text-secondary)]">
+                These values are used to pre-fill the TDEE calculator. They are not tracked over time.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm text-[var(--text-secondary)]">Height</label>
+                    <ToggleButton
+                      options={[
+                        { value: 'cm', label: 'cm' },
+                        { value: 'in', label: 'in' },
+                      ]}
+                      value={settingsHeightUnit}
+                      onChange={setSettingsHeightUnit}
+                    />
+                  </div>
+                  <Input
+                    id="settings-height"
+                    value={settingsHeight}
+                    onChange={(e) => setSettingsHeight(e.target.value)}
+                    placeholder={settingsHeightUnit === 'cm' ? '175' : '69'}
+                    min="1"
+                  />
+                </div>
+                <Input
+                  label="Age"
+                  id="settings-age"
+                  value={settingsAge}
+                  onChange={(e) => setSettingsAge(e.target.value)}
+                  placeholder="25"
+                  min="1"
+                  max="120"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={handleSaveSettings} size="sm" className="flex items-center gap-2">
+                  <Save className="w-4 h-4" />
+                  Save Settings
+                </Button>
+                <Button onClick={() => setShowSettings(false)} variant="ghost" size="sm">
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Manual Entry Form */}
+          {showManualEntry && (
+            <div className="p-4 bg-[var(--bg-secondary)] rounded-lg space-y-4">
+              <h3 className="text-sm font-medium text-[var(--text-primary)]">Add Progress Entry</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm text-[var(--text-secondary)]">Weight</label>
+                    <ToggleButton
+                      options={[
+                        { value: 'kg', label: 'kg' },
+                        { value: 'lbs', label: 'lbs' },
+                      ]}
+                      value={manualWeightUnit}
+                      onChange={setManualWeightUnit}
+                    />
+                  </div>
+                  <Input
+                    id="manual-weight"
+                    value={manualWeight}
+                    onChange={(e) => setManualWeight(e.target.value)}
+                    placeholder={manualWeightUnit === 'kg' ? '75' : '165'}
+                    min="1"
+                  />
+                </div>
+                <Input
+                  label="Body Fat %"
+                  id="manual-bodyfat"
+                  value={manualBodyFat}
+                  onChange={(e) => setManualBodyFat(e.target.value)}
+                  placeholder="15"
+                  min="1"
+                  max="60"
+                />
+                <div className="space-y-1.5">
+                  <label className="text-sm text-[var(--text-secondary)]">Date</label>
+                  <input
+                    type="date"
+                    value={manualDate}
+                    onChange={(e) => setManualDate(e.target.value)}
+                    max={getTodayISO()}
+                    className="w-full px-3 py-2 bg-[var(--bg-tertiary)] border border-[var(--bg-tertiary)] rounded-lg
+                               text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleManualSave}
+                  disabled={!manualWeight && !manualBodyFat}
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <Save className="w-4 h-4" />
+                  Save Entry
+                </Button>
+                <Button onClick={() => setShowManualEntry(false)} variant="ghost" size="sm">
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+
           {/* Metric Type Tabs */}
           <div className="flex flex-wrap gap-2">
             {Object.entries(METRIC_CONFIG).map(([type, cfg]) => {

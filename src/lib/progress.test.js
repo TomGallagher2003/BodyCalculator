@@ -14,6 +14,9 @@ import {
   getProgressStats,
   formatDate,
   getTodayISO,
+  getUserSettings,
+  saveUserSettings,
+  getLatestProgressData,
   ENTRY_TYPES,
 } from './progress'
 
@@ -354,6 +357,83 @@ describe('Progress Storage', () => {
     it('should return today date in YYYY-MM-DD format', () => {
       const today = getTodayISO()
       expect(today).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+    })
+  })
+
+  describe('getUserSettings', () => {
+    it('should return default settings when no data exists', () => {
+      const settings = getUserSettings()
+      expect(settings).toEqual({ height: '', heightUnit: 'cm', age: '' })
+    })
+
+    it('should return saved settings', () => {
+      const testSettings = { height: 175, heightUnit: 'cm', age: 30 }
+      localStorageMock.setItem('bodycalc_settings', JSON.stringify(testSettings))
+
+      const settings = getUserSettings()
+      expect(settings.height).toBe(175)
+      expect(settings.heightUnit).toBe('cm')
+      expect(settings.age).toBe(30)
+    })
+
+    it('should handle invalid JSON gracefully', () => {
+      localStorageMock.setItem('bodycalc_settings', 'invalid json')
+      const settings = getUserSettings()
+      expect(settings).toEqual({ height: '', heightUnit: 'cm', age: '' })
+    })
+  })
+
+  describe('saveUserSettings', () => {
+    it('should save new settings', () => {
+      const settings = saveUserSettings({ height: 180, heightUnit: 'cm', age: 25 })
+
+      expect(settings.height).toBe(180)
+      expect(settings.age).toBe(25)
+      expect(localStorageMock.setItem).toHaveBeenCalledWith(
+        'bodycalc_settings',
+        expect.any(String)
+      )
+    })
+
+    it('should merge with existing settings', () => {
+      const existing = { height: 175, heightUnit: 'cm', age: 30 }
+      localStorageMock.setItem('bodycalc_settings', JSON.stringify(existing))
+
+      const updated = saveUserSettings({ age: 31 })
+
+      expect(updated.height).toBe(175)
+      expect(updated.age).toBe(31)
+    })
+  })
+
+  describe('getLatestProgressData', () => {
+    it('should return combined data from progress and settings', () => {
+      const weightEntry = [{ id: '1', date: '2025-01-15', type: 'weight', data: { weight: 80, unit: 'kg' } }]
+      const bodyFatEntry = [{ id: '2', date: '2025-01-15', type: 'bodyFat', data: { bodyFat: 15 } }]
+      const settings = { height: 175, heightUnit: 'cm', age: 30 }
+
+      localStorageMock.setItem('bodycalc_progress', JSON.stringify([...weightEntry, ...bodyFatEntry]))
+      localStorageMock.setItem('bodycalc_settings', JSON.stringify(settings))
+
+      const data = getLatestProgressData()
+
+      expect(data.weight).toBe(80)
+      expect(data.weightUnit).toBe('kg')
+      expect(data.bodyFat).toBe(15)
+      expect(data.height).toBe(175)
+      expect(data.heightUnit).toBe('cm')
+      expect(data.age).toBe(30)
+    })
+
+    it('should return defaults when no data exists', () => {
+      const data = getLatestProgressData()
+
+      expect(data.weight).toBe('')
+      expect(data.weightUnit).toBe('kg')
+      expect(data.bodyFat).toBe('')
+      expect(data.height).toBe('')
+      expect(data.heightUnit).toBe('cm')
+      expect(data.age).toBe('')
     })
   })
 })

@@ -32,7 +32,7 @@ const DEFAULT_FAT_PERCENTAGE = 25
 export function MacroCalculator({ initialTDEE, initialWeight, initialWeightUnit }) {
   const [tdee, setTdee] = useState(initialTDEE?.toString() || '')
   const [bodyweight, setBodyweight] = useState(initialWeight?.toString() || '')
-  const [weightUnit, setWeightUnit] = useState(initialWeightUnit || 'lbs')
+  const [weightUnit, setWeightUnit] = useState(initialWeightUnit || 'kg')
   const [customAdjustment, setCustomAdjustment] = useState(0)
   const [showCustomRules, setShowCustomRules] = useState(false)
   const [proteinMultiplier, setProteinMultiplier] = useState(DEFAULT_PROTEIN_MULTIPLIER)

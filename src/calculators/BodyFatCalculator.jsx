@@ -23,12 +23,12 @@ function feetInchesToInchesLocal(feet, inches) {
 export function BodyFatCalculator() {
   const [sex, setSex] = useState('male')
   const [weight, setWeight] = useState('')
-  const [weightUnit, setWeightUnit] = useState('lbs')
+  const [weightUnit, setWeightUnit] = useState('kg')
   const [heightFeet, setHeightFeet] = useState('')
   const [heightInches, setHeightInches] = useState('')
   const [heightCm, setHeightCm] = useState('')
-  const [heightUnit, setHeightUnit] = useState('ft')
-  const [measurementUnit, setMeasurementUnit] = useState('in')
+  const [heightUnit, setHeightUnit] = useState('cm')
+  const [measurementUnit, setMeasurementUnit] = useState('cm')
   const [neck, setNeck] = useState('')
   const [waist, setWaist] = useState('')
   const [hip, setHip] = useState('')
@@ -235,14 +235,14 @@ export function BodyFatCalculator() {
             <ResultDisplay
               label="Fat Mass"
               value={results.fatMass.toFixed(1)}
-              unit="lbs"
+              unit={weightUnit}
               size="md"
               color="warning"
             />
             <ResultDisplay
               label="Lean Mass"
               value={results.leanMass.toFixed(1)}
-              unit="lbs"
+              unit={weightUnit}
               size="md"
               color="success"
             />
@@ -261,7 +261,7 @@ export function BodyFatCalculator() {
               data={{
                 bodyFat: results.bodyFatPercentage,
                 weight: parseFloat(weight),
-                weightUnit,
+                unit: weightUnit,
                 fatMass: results.fatMass,
                 leanMass: results.leanMass,
                 category: results.category.label,

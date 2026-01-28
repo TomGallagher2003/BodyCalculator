@@ -77,6 +77,15 @@
 - [x] Write unit tests for progress storage functions (31 new tests)
 - [x] Add danger/success Button variants for UI actions
 
+### Phase 11: Progress Tracker Enhancement
+- [x] Add manual input form for weight and body fat entries in Progress Dashboard
+- [x] Update all calculators to default to metric units (kg, cm)
+- [x] Remove TDEE tracking from Progress Dashboard (Weight and Body Fat only)
+- [x] Add user settings storage for height and age (not tracked over time)
+- [x] Add "Load from Progress" button to TDEE Calculator
+- [x] TDEE Calculator loads latest weight, body fat, height, and age from progress data
+- [x] Write unit tests for user settings functions (7 new tests, 138 total)
+
 ---
 
 ## Completed Features Log
@@ -93,3 +102,4 @@
 | 2026-01-28 | Body fat % enhanced TDEE (Katch-McArdle) with 103 total tests | - |
 | 2026-01-28 | Feature backlog (5 new feature ideas) | - |
 | 2026-01-28 | Progress Tracking with localStorage, charts, export/import | - |
+| 2026-01-28 | Progress Tracker enhancement: manual inputs, metric defaults, user settings (138 tests) | - |
