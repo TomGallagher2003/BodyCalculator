@@ -13,7 +13,7 @@ Documentation: You MUST update PROGRESS.md after completing Task A and Task B
 Quality Control:
 Create/Update unit tests for any Taks with new logic
 Run npm run build locally to verify stability before finishing.
-Deployment: Once both tasks are verified and committed, push the changes to main to trigger our GitHub Pages workflow.
+Deployment: Once both tasks are verified and committed, push the changes to dev-claude to trigger our GitHub Pages workflow. All future work should be pushed to dev-claude when completed.
 COMMAND:
 Read the context files.
 Draft the updated section of PLAN.md for the provided task(s)
