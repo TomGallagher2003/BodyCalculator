@@ -4,6 +4,7 @@
  */
 
 const STORAGE_KEY = 'bodycalc_progress'
+const SETTINGS_KEY = 'bodycalc_settings'
 
 /**
  * Entry types for different calculator results
@@ -13,6 +14,57 @@ export const ENTRY_TYPES = {
   BODY_FAT: 'bodyFat',
   TDEE: 'tdee',
   MACROS: 'macros',
+}
+
+/**
+ * Get user settings from localStorage
+ * @returns {Object} User settings (height, age, etc.)
+ */
+export function getUserSettings() {
+  try {
+    const data = localStorage.getItem(SETTINGS_KEY)
+    if (!data) return { height: '', heightUnit: 'cm', age: '' }
+    return JSON.parse(data)
+  } catch {
+    console.error('Failed to read user settings')
+    return { height: '', heightUnit: 'cm', age: '' }
+  }
+}
+
+/**
+ * Save user settings to localStorage
+ * @param {Object} settings - User settings to save
+ * @returns {Object} The saved settings
+ */
+export function saveUserSettings(settings) {
+  try {
+    const current = getUserSettings()
+    const updated = { ...current, ...settings }
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(updated))
+    return updated
+  } catch {
+    console.error('Failed to save user settings')
+    return settings
+  }
+}
+
+/**
+ * Get the most recent progress data for loading into calculators
+ * @returns {Object} Latest weight, body fat, and user settings
+ */
+export function getLatestProgressData() {
+  const latestWeight = getLatestEntry(ENTRY_TYPES.WEIGHT)
+  const latestBodyFat = getLatestEntry(ENTRY_TYPES.BODY_FAT)
+  const settings = getUserSettings()
+
+  return {
+    weight: latestWeight?.data?.weight || '',
+    weightUnit: latestWeight?.data?.unit || 'kg',
+    bodyFat: latestBodyFat?.data?.bodyFat || '',
+    height: settings.height || '',
+    heightUnit: settings.heightUnit || 'cm',
+    age: settings.age || '',
+  }
 }
 
 /**

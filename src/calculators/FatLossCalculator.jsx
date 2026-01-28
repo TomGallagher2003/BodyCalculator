@@ -16,7 +16,7 @@ import { calculateFatLossRequired } from '../lib/fatloss'
 
 export function FatLossCalculator() {
   const [weight, setWeight] = useState('')
-  const [weightUnit, setWeightUnit] = useState('lbs')
+  const [weightUnit, setWeightUnit] = useState('kg')
   const [currentBodyFat, setCurrentBodyFat] = useState(20)
   const [targetBodyFat, setTargetBodyFat] = useState(12)
 

@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { ArrowRight, ChevronDown, ChevronUp, X } from 'lucide-react'
+import { ArrowRight, ChevronDown, ChevronUp, X, Download } from 'lucide-react'
 import {
   Card,
   CardHeader,
@@ -14,23 +14,54 @@ import {
   ResultDisplay,
   ResultCard,
   ResultGrid,
-  SaveProgressButton,
 } from '../components'
-import { ENTRY_TYPES } from '../lib/progress'
+import { getLatestProgressData } from '../lib/progress'
 import { calculateFullTDEE, ACTIVITY_LEVELS, feetInchesToInches, kgToLbs } from '../lib/tdee'
 
 export function TDEECalculator({ onUseTDEE }) {
   const [age, setAge] = useState('')
   const [weight, setWeight] = useState('')
-  const [weightUnit, setWeightUnit] = useState('lbs')
+  const [weightUnit, setWeightUnit] = useState('kg')
   const [heightFeet, setHeightFeet] = useState('')
   const [heightInches, setHeightInches] = useState('')
   const [heightCm, setHeightCm] = useState('')
-  const [heightUnit, setHeightUnit] = useState('ft')
+  const [heightUnit, setHeightUnit] = useState('cm')
   const [sex, setSex] = useState('male')
   const [activityLevel, setActivityLevel] = useState('moderate')
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [bodyFatPercent, setBodyFatPercent] = useState('')
+  const [hasLoadedFromProgress, setHasLoadedFromProgress] = useState(false)
+
+  const handleLoadFromProgress = () => {
+    const data = getLatestProgressData()
+    if (data.weight) {
+      setWeight(data.weight.toString())
+      setWeightUnit(data.weightUnit || 'kg')
+    }
+    if (data.bodyFat) {
+      setBodyFatPercent(data.bodyFat.toString())
+      setShowAdvanced(true)
+    }
+    if (data.age) {
+      setAge(data.age.toString())
+    }
+    if (data.height) {
+      if (data.heightUnit === 'cm') {
+        setHeightCm(data.height.toString())
+        setHeightUnit('cm')
+      } else {
+        const totalInches = parseFloat(data.height)
+        setHeightFeet(Math.floor(totalInches / 12).toString())
+        setHeightInches((totalInches % 12).toString())
+        setHeightUnit('ft')
+      }
+    }
+    setHasLoadedFromProgress(true)
+  }
+
+  // Check if there's progress data available
+  const progressData = useMemo(() => getLatestProgressData(), [])
+  const hasProgressData = progressData.weight || progressData.bodyFat || progressData.age || progressData.height
 
   const activityOptions = Object.entries(ACTIVITY_LEVELS).map(([key, val]) => ({
     value: key,
@@ -77,10 +108,25 @@ export function TDEECalculator({ onUseTDEE }) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>TDEE Calculator</CardTitle>
-          <CardDescription>
-            Calculate your Total Daily Energy Expenditure using the Mifflin-St Jeor formula
-          </CardDescription>
+          <div className="flex items-start justify-between">
+            <div>
+              <CardTitle>TDEE Calculator</CardTitle>
+              <CardDescription>
+                Calculate your Total Daily Energy Expenditure using the Mifflin-St Jeor formula
+              </CardDescription>
+            </div>
+            {hasProgressData && !hasLoadedFromProgress && (
+              <Button
+                onClick={handleLoadFromProgress}
+                variant="secondary"
+                size="sm"
+                className="flex items-center gap-2 shrink-0"
+              >
+                <Download className="w-4 h-4" />
+                Load from Progress
+              </Button>
+            )}
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -285,17 +331,7 @@ export function TDEECalculator({ onUseTDEE }) {
               Using Mifflin-St Jeor formula
             </div>
           )}
-          <div className="mt-4 pt-4 border-t border-[var(--bg-secondary)] space-y-3">
-            <SaveProgressButton
-              entryType={ENTRY_TYPES.TDEE}
-              data={{
-                tdee: results.tdee,
-                bmr: results.bmr,
-                weight: parseFloat(weight),
-                weightUnit,
-                formula: results.formula,
-              }}
-            />
+          <div className="mt-4 pt-4 border-t border-[var(--bg-secondary)]">
             <Button onClick={handleUseTDEE} variant="secondary" className="w-full flex items-center justify-center gap-2">
               Use for Macro Calculator
               <ArrowRight className="w-4 h-4" />
