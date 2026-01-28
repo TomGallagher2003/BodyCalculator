@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { Sidebar, MobileNav, MobileHeader } from './components'
-import { TDEECalculator, MacroCalculator, BodyFatCalculator, FatLossCalculator } from './calculators'
+import { TDEECalculator, MacroCalculator, BodyFatCalculator, FatLossCalculator, ProgressDashboard } from './calculators'
 
 const pageTitles = {
   tdee: 'TDEE Calculator',
   macros: 'Macro Splitter',
   bodyfat: 'Body Fat Calculator',
   fatloss: 'Fat Loss Required',
+  progress: 'Progress Tracker',
 }
 
 function App() {
@@ -39,6 +40,8 @@ function App() {
         return <BodyFatCalculator />
       case 'fatloss':
         return <FatLossCalculator />
+      case 'progress':
+        return <ProgressDashboard />
       default:
         return <TDEECalculator onUseTDEE={handleUseTDEE} />
     }

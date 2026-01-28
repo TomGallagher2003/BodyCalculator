@@ -65,6 +65,18 @@
 - [x] Write unit tests for new body fat % logic (10 new tests, 103 total)
 - [x] Create BACKLOG.md with 5 prioritized feature ideas
 
+### Phase 10: Progress Tracking with Local Storage
+- [x] Create progress storage utility (lib/progress.js) with localStorage operations
+- [x] Implement save, update, delete, and query functions for entries
+- [x] Add export/import functionality for data backup (JSON format)
+- [x] Create Progress Dashboard view with line charts
+- [x] Add statistics display (current, change, average, count)
+- [x] Create SaveProgressButton component with date picker
+- [x] Integrate Save Progress button into TDEE, Macro, and Body Fat calculators
+- [x] Add Progress Tracker to navigation (Sidebar + MobileNav)
+- [x] Write unit tests for progress storage functions (31 new tests)
+- [x] Add danger/success Button variants for UI actions
+
 ---
 
 ## Completed Features Log
@@ -80,3 +92,4 @@
 | 2026-01-28 | Custom macro rules (protein g/lb, fat %) with 93 total tests | - |
 | 2026-01-28 | Body fat % enhanced TDEE (Katch-McArdle) with 103 total tests | - |
 | 2026-01-28 | Feature backlog (5 new feature ideas) | - |
+| 2026-01-28 | Progress Tracking with localStorage, charts, export/import | - |

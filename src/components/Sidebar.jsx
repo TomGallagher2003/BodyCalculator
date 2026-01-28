@@ -1,10 +1,11 @@
-import { Calculator, Utensils, Activity, Dumbbell, Target } from 'lucide-react'
+import { Calculator, Utensils, Activity, Dumbbell, Target, TrendingUp } from 'lucide-react'
 
 const navItems = [
   { id: 'tdee', label: 'TDEE Calculator', icon: Calculator },
   { id: 'macros', label: 'Macro Splitter', icon: Utensils },
   { id: 'bodyfat', label: 'Body Fat', icon: Activity },
   { id: 'fatloss', label: 'Fat Loss Required', icon: Target },
+  { id: 'progress', label: 'Progress Tracker', icon: TrendingUp },
 ]
 
 export function Sidebar({ currentPage, onNavigate }) {

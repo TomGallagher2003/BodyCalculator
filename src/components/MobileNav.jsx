@@ -1,10 +1,11 @@
-import { Calculator, Utensils, Activity, Target } from 'lucide-react'
+import { Calculator, Utensils, Activity, Target, TrendingUp } from 'lucide-react'
 
 const navItems = [
   { id: 'tdee', label: 'TDEE', icon: Calculator },
   { id: 'macros', label: 'Macros', icon: Utensils },
   { id: 'bodyfat', label: 'Body Fat', icon: Activity },
   { id: 'fatloss', label: 'Fat Loss', icon: Target },
+  { id: 'progress', label: 'Progress', icon: TrendingUp },
 ]
 
 export function MobileNav({ currentPage, onNavigate }) {

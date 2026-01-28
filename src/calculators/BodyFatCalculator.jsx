@@ -10,7 +10,9 @@ import {
   ResultDisplay,
   ResultCard,
   ResultGrid,
+  SaveProgressButton,
 } from '../components'
+import { ENTRY_TYPES } from '../lib/progress'
 import { calculateBodyFat } from '../lib/bodyfat'
 
 // Helper for height conversion (also in tdee.js but keeping bodyfat self-contained)
@@ -251,6 +253,20 @@ export function BodyFatCalculator() {
               <strong>Note:</strong> The Navy method provides an estimate. For precise measurements,
               consider DEXA scanning or hydrostatic weighing.
             </p>
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-[var(--bg-secondary)]">
+            <SaveProgressButton
+              entryType={ENTRY_TYPES.BODY_FAT}
+              data={{
+                bodyFat: results.bodyFatPercentage,
+                weight: parseFloat(weight),
+                weightUnit,
+                fatMass: results.fatMass,
+                leanMass: results.leanMass,
+                category: results.category.label,
+              }}
+            />
           </div>
         </ResultCard>
       )}

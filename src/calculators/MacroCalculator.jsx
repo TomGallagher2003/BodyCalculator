@@ -13,7 +13,9 @@ import {
   ResultCard,
   ResultGrid,
   MacroBar,
+  SaveProgressButton,
 } from '../components'
+import { ENTRY_TYPES } from '../lib/progress'
 import { calculateMacros, kgToLbs, proteinGramsToPercentage } from '../lib/macros'
 
 const QUICK_ADJUSTMENTS = [
@@ -393,6 +395,20 @@ export function MacroCalculator({ initialTDEE, initialWeight, initialWeightUnit 
               <strong>Formula:</strong> Protein = {proteinMultiplier}g/lb bodyweight, Fat = {fatPercentage}% of calories, Carbs = remaining calories
               {isCustomRulesModified && <span className="text-[var(--accent)]"> (custom)</span>}
             </p>
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-[var(--bg-secondary)]">
+            <SaveProgressButton
+              entryType={ENTRY_TYPES.MACROS}
+              data={{
+                calories: results.targetCalories,
+                protein: results.protein,
+                carbs: results.carbs,
+                fat: results.fat,
+                weight: bodyweightLbs,
+                weightUnit: 'lbs',
+              }}
+            />
           </div>
         </ResultCard>
       )}
