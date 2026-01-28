@@ -58,6 +58,16 @@ export function feetInchesToInches(feet, inches) {
 }
 
 /**
+ * Calculate lean body mass from total weight and body fat percentage
+ * @param {number} weightKg - Total weight in kilograms
+ * @param {number} bodyFatPercent - Body fat percentage (0-100)
+ * @returns {number} Lean body mass in kilograms
+ */
+export function calculateLeanMass(weightKg, bodyFatPercent) {
+  return weightKg * (1 - bodyFatPercent / 100)
+}
+
+/**
  * Calculate BMR using Mifflin-St Jeor formula
  * @param {Object} params - Input parameters
  * @param {number} params.weightKg - Weight in kilograms
@@ -81,6 +91,17 @@ export function calculateBMR({ weightKg, heightCm, age, sex }) {
 }
 
 /**
+ * Calculate BMR using Katch-McArdle formula (requires body fat %)
+ * More accurate for individuals who know their body fat percentage
+ * @param {number} leanMassKg - Lean body mass in kilograms
+ * @returns {number} Basal Metabolic Rate in calories
+ */
+export function calculateBMRKatchMcArdle(leanMassKg) {
+  // Katch-McArdle Formula: BMR = 370 + (21.6 × lean mass in kg)
+  return Math.round(370 + (21.6 * leanMassKg))
+}
+
+/**
  * Calculate TDEE from BMR and activity level
  * @param {number} bmr - Basal Metabolic Rate
  * @param {string} activityLevel - Activity level key from ACTIVITY_LEVELS
@@ -101,15 +122,29 @@ export function calculateTDEE(bmr, activityLevel) {
  * @param {number} params.age - Age in years
  * @param {'male'|'female'} params.sex - Biological sex
  * @param {string} params.activityLevel - Activity level key
- * @returns {Object} Object containing BMR and TDEE
+ * @param {number} [params.bodyFatPercent] - Optional body fat percentage (uses Katch-McArdle if provided)
+ * @returns {Object} Object containing BMR, TDEE, formula used, and optionally lean mass
  */
-export function calculateFullTDEE({ weight, weightUnit, height, heightUnit, age, sex, activityLevel }) {
+export function calculateFullTDEE({ weight, weightUnit, height, heightUnit, age, sex, activityLevel, bodyFatPercent }) {
   // Convert to metric if needed
   const weightKg = weightUnit === 'lbs' ? lbsToKg(weight) : weight
   const heightCm = heightUnit === 'in' ? inchesToCm(height) : height
 
-  const bmr = calculateBMR({ weightKg, heightCm, age, sex })
+  let bmr
+  let formula
+  let leanMassKg = null
+
+  // Use Katch-McArdle formula if body fat percentage is provided
+  if (bodyFatPercent !== undefined && bodyFatPercent !== null && bodyFatPercent > 0) {
+    leanMassKg = calculateLeanMass(weightKg, bodyFatPercent)
+    bmr = calculateBMRKatchMcArdle(leanMassKg)
+    formula = 'katch-mcardle'
+  } else {
+    bmr = calculateBMR({ weightKg, heightCm, age, sex })
+    formula = 'mifflin-st-jeor'
+  }
+
   const tdee = calculateTDEE(bmr, activityLevel)
 
-  return { bmr, tdee }
+  return { bmr, tdee, formula, leanMassKg }
 }

@@ -284,3 +284,52 @@ Carb Calories = Target Calories - Protein Calories - Fat Calories
 | Step | Commit Message |
 |------|----------------|
 | 8.1 | `feat: add custom macro rules with adjustable protein/fat ratios` |
+
+---
+
+## Phase 9: Pro Features - Body Fat Enhanced TDEE
+
+### Step 9.1: Optional Body Fat Percentage for TDEE Calculator
+
+**Current State:** TDEE uses Mifflin-St Jeor formula (weight, height, age, sex)
+
+**New Requirement:** Add optional body fat % field that switches to Katch-McArdle formula when provided
+
+**Katch-McArdle Formula:**
+```
+Lean Body Mass (kg) = Weight (kg) × (1 - Body Fat %)
+BMR = 370 + (21.6 × Lean Body Mass in kg)
+```
+
+This formula is more accurate for individuals who know their body fat %, especially for:
+- Very lean individuals
+- Those with above-average muscle mass
+
+**UI Updates:**
+- Add collapsible "Advanced" section after activity level
+- Body fat % slider (5% - 50%) with number input
+- Visual indicator when Katch-McArdle is active
+- "Clear" button to revert to standard formula
+
+**Files to modify:**
+- `src/lib/tdee.js` - Add Katch-McArdle formula and lean mass calculation
+- `src/lib/tdee.test.js` - Add tests for new formula
+- `src/calculators/TDEECalculator.jsx` - Add body fat % input UI
+
+---
+
+### Step 9.2: Feature Backlog
+
+**Objective:** Document 5 potential future features in BACKLOG.md
+
+**File to create:**
+- `BACKLOG.md` - Feature backlog with descriptions and priority
+
+---
+
+## Commit Strategy (Phase 9)
+
+| Step | Commit Message |
+|------|----------------|
+| 9.1 | `feat: add optional body fat % for enhanced TDEE calculation` |
+| 9.2 | `docs: add feature backlog with 5 new feature ideas` |

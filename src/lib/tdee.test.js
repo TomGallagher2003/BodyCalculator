@@ -6,6 +6,8 @@ import {
   cmToInches,
   feetInchesToInches,
   calculateBMR,
+  calculateBMRKatchMcArdle,
+  calculateLeanMass,
   calculateTDEE,
   calculateFullTDEE,
   ACTIVITY_LEVELS,
@@ -48,6 +50,43 @@ describe('Unit Conversions', () => {
     it('converts 6 feet 0 inches to 72 inches', () => {
       expect(feetInchesToInches(6, 0)).toBe(72)
     })
+  })
+})
+
+describe('calculateLeanMass', () => {
+  it('calculates lean mass for 80kg at 20% body fat', () => {
+    const leanMass = calculateLeanMass(80, 20)
+    expect(leanMass).toBe(64)
+  })
+
+  it('calculates lean mass for 100kg at 15% body fat', () => {
+    const leanMass = calculateLeanMass(100, 15)
+    expect(leanMass).toBe(85)
+  })
+
+  it('calculates lean mass for 70kg at 30% body fat', () => {
+    const leanMass = calculateLeanMass(70, 30)
+    expect(leanMass).toBe(49)
+  })
+})
+
+describe('calculateBMRKatchMcArdle', () => {
+  it('calculates BMR for 64kg lean mass', () => {
+    const bmr = calculateBMRKatchMcArdle(64)
+    // 370 + (21.6 * 64) = 370 + 1382.4 = 1752.4 -> 1752
+    expect(bmr).toBe(1752)
+  })
+
+  it('calculates BMR for 50kg lean mass', () => {
+    const bmr = calculateBMRKatchMcArdle(50)
+    // 370 + (21.6 * 50) = 370 + 1080 = 1450
+    expect(bmr).toBe(1450)
+  })
+
+  it('calculates BMR for 80kg lean mass', () => {
+    const bmr = calculateBMRKatchMcArdle(80)
+    // 370 + (21.6 * 80) = 370 + 1728 = 2098
+    expect(bmr).toBe(2098)
   })
 })
 
@@ -123,6 +162,8 @@ describe('calculateFullTDEE', () => {
     expect(result.bmr).toBeGreaterThan(1500)
     expect(result.bmr).toBeLessThan(2000)
     expect(result.tdee).toBeGreaterThan(result.bmr)
+    expect(result.formula).toBe('mifflin-st-jeor')
+    expect(result.leanMassKg).toBeNull()
   })
 
   it('calculates full TDEE with metric units', () => {
@@ -138,6 +179,80 @@ describe('calculateFullTDEE', () => {
 
     expect(result.bmr).toBe(1780)
     expect(result.tdee).toBe(Math.round(1780 * 1.55))
+    expect(result.formula).toBe('mifflin-st-jeor')
+  })
+
+  it('uses Katch-McArdle formula when body fat % is provided', () => {
+    const result = calculateFullTDEE({
+      weight: 80,
+      weightUnit: 'kg',
+      height: 180,
+      heightUnit: 'cm',
+      age: 30,
+      sex: 'male',
+      activityLevel: 'moderate',
+      bodyFatPercent: 20,
+    })
+
+    // Lean mass = 80 * (1 - 0.20) = 64 kg
+    // BMR = 370 + (21.6 * 64) = 1752
+    expect(result.formula).toBe('katch-mcardle')
+    expect(result.leanMassKg).toBe(64)
+    expect(result.bmr).toBe(1752)
+    expect(result.tdee).toBe(Math.round(1752 * 1.55))
+  })
+
+  it('uses Mifflin-St Jeor when body fat is null', () => {
+    const result = calculateFullTDEE({
+      weight: 80,
+      weightUnit: 'kg',
+      height: 180,
+      heightUnit: 'cm',
+      age: 30,
+      sex: 'male',
+      activityLevel: 'moderate',
+      bodyFatPercent: null,
+    })
+
+    expect(result.formula).toBe('mifflin-st-jeor')
+    expect(result.bmr).toBe(1780)
+  })
+
+  it('uses Mifflin-St Jeor when body fat is 0', () => {
+    const result = calculateFullTDEE({
+      weight: 80,
+      weightUnit: 'kg',
+      height: 180,
+      heightUnit: 'cm',
+      age: 30,
+      sex: 'male',
+      activityLevel: 'moderate',
+      bodyFatPercent: 0,
+    })
+
+    expect(result.formula).toBe('mifflin-st-jeor')
+    expect(result.bmr).toBe(1780)
+  })
+
+  it('calculates correct TDEE with Katch-McArdle and imperial units', () => {
+    const result = calculateFullTDEE({
+      weight: 180,
+      weightUnit: 'lbs',
+      height: 70,
+      heightUnit: 'in',
+      age: 30,
+      sex: 'male',
+      activityLevel: 'sedentary',
+      bodyFatPercent: 15,
+    })
+
+    // 180 lbs = ~81.6 kg
+    // Lean mass = 81.6 * 0.85 = ~69.4 kg
+    // BMR = 370 + (21.6 * 69.4) = ~1869
+    expect(result.formula).toBe('katch-mcardle')
+    expect(result.leanMassKg).toBeCloseTo(69.4, 0)
+    expect(result.bmr).toBeGreaterThan(1800)
+    expect(result.bmr).toBeLessThan(1900)
   })
 })
 
