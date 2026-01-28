@@ -11,6 +11,8 @@ export function Button({
     primary: 'bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--bg-primary)] font-medium',
     secondary: 'bg-[var(--bg-tertiary)] hover:bg-[var(--bg-secondary)] text-[var(--text-primary)] border border-[var(--bg-tertiary)]',
     ghost: 'bg-transparent hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]',
+    danger: 'bg-[var(--error)] hover:bg-red-600 text-white font-medium',
+    success: 'bg-[var(--success)] hover:bg-green-600 text-white font-medium',
   }
 
   const sizes = {

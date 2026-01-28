@@ -14,7 +14,9 @@ import {
   ResultDisplay,
   ResultCard,
   ResultGrid,
+  SaveProgressButton,
 } from '../components'
+import { ENTRY_TYPES } from '../lib/progress'
 import { calculateFullTDEE, ACTIVITY_LEVELS, feetInchesToInches, kgToLbs } from '../lib/tdee'
 
 export function TDEECalculator({ onUseTDEE }) {
@@ -283,8 +285,18 @@ export function TDEECalculator({ onUseTDEE }) {
               Using Mifflin-St Jeor formula
             </div>
           )}
-          <div className="mt-4 pt-4 border-t border-[var(--bg-secondary)]">
-            <Button onClick={handleUseTDEE} className="w-full flex items-center justify-center gap-2">
+          <div className="mt-4 pt-4 border-t border-[var(--bg-secondary)] space-y-3">
+            <SaveProgressButton
+              entryType={ENTRY_TYPES.TDEE}
+              data={{
+                tdee: results.tdee,
+                bmr: results.bmr,
+                weight: parseFloat(weight),
+                weightUnit,
+                formula: results.formula,
+              }}
+            />
+            <Button onClick={handleUseTDEE} variant="secondary" className="w-full flex items-center justify-center gap-2">
               Use for Macro Calculator
               <ArrowRight className="w-4 h-4" />
             </Button>
