@@ -236,3 +236,51 @@ Where:
 |------|----------------|
 | 7.1 | `feat: add custom calorie adjustment to macro splitter` |
 | 7.2 | `feat: add fat loss required calculator` |
+
+---
+
+## Phase 8: Custom Macro Rules
+
+### Step 8.1: Custom Macro Percentages & Protein Multiplier
+
+**Current State:** Fixed macro formula (Protein = 1g/lb, Fat = 25%, Carbs = remaining)
+
+**New Requirement:** Allow users to customize macro distribution with two linked input modes:
+
+1. **Custom Protein (g/lb):** Slider/input for protein multiplier (0.6 - 1.5 g/lb)
+2. **Custom Fat (%):** Slider/input for fat percentage (15% - 45%)
+3. **Carbs (%):** Automatically calculated as remaining calories
+
+**Bidirectional Sync Logic:**
+- When protein g/lb changes → Recalculate and display protein % of total calories
+- When fat % changes → Update fat grams accordingly
+- Carb % always equals 100% - protein% - fat%
+- All percentages displayed live in the UI
+
+**Math:**
+```
+Protein Calories = bodyweight_lbs × protein_g_per_lb × 4
+Protein % = (Protein Calories / Target Calories) × 100
+Fat Calories = Target Calories × fat_percentage
+Carb Calories = Target Calories - Protein Calories - Fat Calories
+```
+
+**UI Updates:**
+- Add "Custom Rules" expandable section
+- Protein: slider (0.6-1.5 g/lb) with live percentage display
+- Fat: slider (15%-45%) with grams display
+- Live percentage breakdown showing P/C/F split
+- Reset button to restore defaults (1g/lb, 25% fat)
+
+**Files to modify:**
+- `src/lib/macros.js` - Add conversion helpers
+- `src/lib/macros.test.js` - Add tests for new helpers
+- `src/calculators/MacroCalculator.jsx` - Add custom rules UI
+
+---
+
+## Commit Strategy (Phase 8)
+
+| Step | Commit Message |
+|------|----------------|
+| 8.1 | `feat: add custom macro rules with adjustable protein/fat ratios` |

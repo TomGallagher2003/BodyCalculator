@@ -47,6 +47,15 @@
 - [x] Create Fat Loss Required calculator UI
 - [x] Add new calculator to navigation (Sidebar + MobileNav)
 
+### Phase 8: Custom Macro Rules
+- [x] Add custom protein multiplier (0.6-1.5 g/lb) with live percentage display
+- [x] Add custom fat percentage slider (15%-45%) with grams display
+- [x] Implement bidirectional sync between g/lb and percentage values
+- [x] Add expandable "Custom Macro Rules" section in UI
+- [x] Add live P/C/F percentage breakdown visualization
+- [x] Add reset to defaults button
+- [x] Write unit tests for new helper functions (17 new tests, 93 total)
+
 ---
 
 ## Completed Features Log
@@ -59,3 +68,4 @@
 | 2026-01-27 | GitHub Actions deployment workflow | - |
 | 2026-01-27 | Macro Splitter custom calorie adjustment | - |
 | 2026-01-27 | Fat Loss Required calculator (78 total tests) | - |
+| 2026-01-28 | Custom macro rules (protein g/lb, fat %) with 93 total tests | - |
