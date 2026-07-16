@@ -6,3 +6,4 @@ export { ResultDisplay, ResultCard, ResultGrid, MacroBar } from './ResultDisplay
 export { Sidebar } from './Sidebar'
 export { MobileNav, MobileHeader } from './MobileNav'
 export { SaveProgressButton } from './SaveProgressButton'
+export { WeightTrendChart } from './WeightTrendChart'

@@ -10,6 +10,7 @@ import {
   Input,
   ToggleButton,
   ResultCard,
+  WeightTrendChart,
 } from '../components'
 import {
   getProgressEntries,
@@ -27,6 +28,7 @@ import {
   saveUserSettings,
   ENTRY_TYPES,
 } from '../lib/progress'
+import { normalizeWeightSeries } from '../lib/weightTrends'
 
 const METRIC_CONFIG = {
   [ENTRY_TYPES.WEIGHT]: {
@@ -242,6 +244,7 @@ function EntryList({ entries, onDelete }) {
 export function ProgressDashboard() {
   const [activeType, setActiveType] = useState(ENTRY_TYPES.WEIGHT)
   const [refreshKey, setRefreshKey] = useState(0)
+  const [weightRange, setWeightRange] = useState('3M')
   const fileInputRef = useRef(null)
 
   // Manual entry form state
@@ -280,6 +283,12 @@ export function ProgressDashboard() {
     () => (config ? getProgressStats(activeType, config.metric) : null),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [activeType, config, refreshKey]
+  )
+  const weightDisplayUnit = typeEntries[0]?.data?.unit || 'kg'
+  const weightSeries = useMemo(
+    () => normalizeWeightSeries(getEntriesByType(ENTRY_TYPES.WEIGHT), weightDisplayUnit),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [refreshKey, weightDisplayUnit]
   )
 
   const handleManualSave = () => {
@@ -565,7 +574,17 @@ export function ProgressDashboard() {
             <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-3">
               {config?.label} Over Time
             </h3>
-            <SimpleLineChart data={chartData} color={config?.color || 'var(--accent)'} height={180} />
+            {activeType === ENTRY_TYPES.WEIGHT ? (
+              <WeightTrendChart
+                series={weightSeries}
+                unit={weightDisplayUnit}
+                range={weightRange}
+                onRangeChange={setWeightRange}
+                height={220}
+              />
+            ) : (
+              <SimpleLineChart data={chartData} color={config?.color || 'var(--accent)'} height={180} />
+            )}
           </div>
         </CardContent>
       </Card>

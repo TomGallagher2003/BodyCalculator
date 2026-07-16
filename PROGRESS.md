@@ -95,6 +95,14 @@
 - [x] App now installable on iOS/Android home screens
 - [x] Offline support via service worker caching
 
+### Phase 13: Weight Tracking - Moving Averages & Trendline
+- [x] Create weight trend math utility (lib/weightTrends.js): unit-normalized series, date-range filtering, 7-day moving average, linear regression line of best fit
+- [x] Write unit tests for weight trend math (17 new tests, 155 total)
+- [x] Build WeightTrendChart component: raw entries, 7-day moving average line, dashed trend line, legend, hover crosshair/tooltip
+- [x] Add range selector (1W / 1M / 3M / 6M / 1Y / All) relative to the current date
+- [x] Integrate WeightTrendChart into the Weight tab of the Progress Dashboard
+- [x] Verify chart renders and resizes correctly across desktop and mobile viewports
+
 ---
 
 ## Completed Features Log
@@ -113,3 +121,4 @@
 | 2026-01-28 | Progress Tracking with localStorage, charts, export/import | - |
 | 2026-01-28 | Progress Tracker enhancement: manual inputs, metric defaults, user settings (138 tests) | - |
 | 2026-01-28 | PWA conversion: installable app with offline support | - |
+| 2026-07-16 | Weight tracking: 7-day moving average + line-of-best-fit trend chart with date range selector (155 total tests) | - |
