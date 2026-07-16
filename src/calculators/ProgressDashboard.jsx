@@ -214,7 +214,7 @@ function EntryList({ entries, onDelete }) {
         return (
           <div
             key={entry.id}
-            className="flex items-center justify-between p-3 bg-[var(--bg-secondary)] rounded-lg group"
+            className="flex items-center justify-between p-3 bg-[var(--bg-secondary)] rounded-lg"
           >
             <div className="flex items-center gap-3">
               <Icon className="w-4 h-4 text-[var(--accent)]" />
@@ -229,7 +229,7 @@ function EntryList({ entries, onDelete }) {
             </div>
             <button
               onClick={() => onDelete(entry.id)}
-              className="p-1 opacity-0 group-hover:opacity-100 text-[var(--text-secondary)] hover:text-[var(--error)] transition-all"
+              className="p-2.5 -m-1 text-[var(--text-secondary)] hover:text-[var(--error)] active:text-[var(--error)] transition-colors"
               aria-label="Delete entry"
             >
               <Trash2 className="w-4 h-4" />
