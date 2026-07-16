@@ -319,9 +319,15 @@ export function formatDate(isoDate, format = 'medium') {
 }
 
 /**
- * Get today's date as ISO string (date only, no time)
+ * The timezone used for "today" throughout the app, so date defaults are
+ * consistent regardless of the device's local timezone or clock settings.
+ */
+export const APP_TIMEZONE = 'Pacific/Auckland'
+
+/**
+ * Get today's date (in APP_TIMEZONE) as an ISO string (date only, no time)
  * @returns {string} Today's date in YYYY-MM-DD format
  */
 export function getTodayISO() {
-  return new Date().toISOString().split('T')[0]
+  return new Date().toLocaleDateString('en-CA', { timeZone: APP_TIMEZONE })
 }

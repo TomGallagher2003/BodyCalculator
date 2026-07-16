@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import {
   RANGE_OPTIONS,
   convertWeight,
@@ -90,6 +90,16 @@ describe('filterSeriesByRange', () => {
 
   it('has an option for every documented range', () => {
     expect(RANGE_OPTIONS.map((r) => r.value)).toEqual(['1W', '1M', '3M', '6M', '1Y', 'ALL'])
+  })
+
+  it('defaults "now" to the New Zealand date, not the device/UTC date', () => {
+    // 11:30pm UTC on 2026-07-15 is already 2026-07-16 in New Zealand
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-07-15T23:30:00Z'))
+    const result = filterSeriesByRange(series, '1W')
+    vi.useRealTimers()
+    // a 7-day window ending 2026-07-16 should include 2026-07-10 but not 2026-06-20
+    expect(result.map((p) => p.date)).toEqual(['2026-07-10', '2026-07-15'])
   })
 })
 

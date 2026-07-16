@@ -358,6 +358,22 @@ describe('Progress Storage', () => {
       const today = getTodayISO()
       expect(today).toMatch(/^\d{4}-\d{2}-\d{2}$/)
     })
+
+    it('should use New Zealand time, not the device/UTC date', () => {
+      // 11:30pm UTC on June 30 is already July 1 in New Zealand (UTC+12/+13)
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-06-30T23:30:00Z'))
+      expect(getTodayISO()).toBe('2026-07-01')
+      vi.useRealTimers()
+    })
+
+    it('should still be the same day in New Zealand when it is morning UTC', () => {
+      // 1am UTC on July 1 is afternoon of July 1 in New Zealand
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-07-01T01:00:00Z'))
+      expect(getTodayISO()).toBe('2026-07-01')
+      vi.useRealTimers()
+    })
   })
 
   describe('getUserSettings', () => {
