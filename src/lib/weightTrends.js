@@ -5,6 +5,7 @@
  */
 
 import { lbsToKg, kgToLbs } from './tdee'
+import { getTodayISO } from './progress'
 
 export const RANGE_OPTIONS = [
   { value: '1W', label: '1W', days: 7 },
@@ -48,10 +49,10 @@ export function normalizeWeightSeries(entries, targetUnit = 'kg') {
  * Filter a chronological series to entries within a range relative to the current date
  * @param {Array} series - [{date, value}] sorted chronologically
  * @param {string} range - One of RANGE_OPTIONS values ('1W', '1M', '3M', '6M', '1Y', 'ALL')
- * @param {Date} [now] - Reference "current" date, defaults to today
+ * @param {Date} [now] - Reference "current" date, defaults to today in APP_TIMEZONE
  * @returns {Array} Filtered series
  */
-export function filterSeriesByRange(series, range, now = new Date()) {
+export function filterSeriesByRange(series, range, now = new Date(getTodayISO())) {
   const option = RANGE_OPTIONS.find((r) => r.value === range)
   if (!option || option.days === null) return series
 

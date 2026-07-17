@@ -102,6 +102,13 @@
 - [x] Add range selector (1W / 1M / 3M / 6M / 1Y / All) relative to the current date
 - [x] Integrate WeightTrendChart into the Weight tab of the Progress Dashboard
 - [x] Verify chart renders and resizes correctly across desktop and mobile viewports
+- [x] Make entry delete button always visible (was hover-only, unusable on touch devices)
+
+### Phase 14: New Zealand Date Default
+- [x] Fix getTodayISO() to compute "today" in Pacific/Auckland time instead of UTC/device time
+- [x] Align weight chart range-filter default reference date with the same NZ "today"
+- [x] Add regression tests proving the date is NZ-based, not UTC or device-local (3 new tests, 158 total)
+- [x] Verify via emulated non-NZ device timezone that the app still shows NZ's current date
 
 ---
 
@@ -122,3 +129,5 @@
 | 2026-01-28 | Progress Tracker enhancement: manual inputs, metric defaults, user settings (138 tests) | - |
 | 2026-01-28 | PWA conversion: installable app with offline support | - |
 | 2026-07-16 | Weight tracking: 7-day moving average + line-of-best-fit trend chart with date range selector (155 total tests) | - |
+| 2026-07-16 | Always-visible delete button on progress entries (touch device fix) | - |
+| 2026-07-16 | Date defaults now use New Zealand time instead of UTC/device time (158 total tests) | - |
